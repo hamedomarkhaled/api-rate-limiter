@@ -8,33 +8,17 @@ It supports multiple algorithms and simulates a distributed environment using mu
 ## 🚀 Features
 
 - ✅ Pluggable architecture with interface-based rate limiter
-- ⛽ **Token Bucket** algorithm implemented  ✅
-- ⚙️ Switchable algorithms via Kotlin configuration
-- 🧪 Unit testing with JUnit
+- ⛽ **Token Bucket** algorithm implemented ✅
+- 💧 **Leaky Bucket** algorithm implemented ✅
+- ⚙️ Switchable algorithms via Kotlin configuration (hardcoded config for now)
+- 🧪 Unit testing with JUnit (for both algorithms)
 - 🔁 Multi-threaded simulation of concurrent clients
 - 📈 Logging of allowed and throttled requests
+
 ---
 
-
-
 ## 🧪 How to Test
-▶️ Run the App
-```
+
+▶️ Run the App:
+```bash
 ./gradlew bootRun
-```
-
-Then hit the rate-limited endpoint:
-
-```
-curl "http://localhost:8080/api/request?clientId=client1"
-```
-
-# 🔁 Run Multi-threaded Simulation
-Run `ThreadSimulator.kt` from your IDE to simulate distributed clients hitting the rate limiter.
-
-## ✅ Unit Tests
-Run unit tests using:
-
-```
-./gradlew test
-```

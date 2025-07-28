@@ -1,42 +1,46 @@
 package com.okhhamed.apiratelimiter.limiter
 
-import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.min
+import org.slf4j.LoggerFactory
 
-class TokenBucketRateLimiter(private val capacity: Int, private val refillRatePerSecond: Int): RateLimiter {
+class TokenBucketRateLimiter(
+    private val capacity: Int,
+    private val refillRatePerSecond: Int
+) : RateLimiter {
     private val logger = LoggerFactory.getLogger(TokenBucketRateLimiter::class.java)
 
-    private data class Bucket(var tokens: Double, var lastRefillTimestamp: Long)
+    private data class Bucket(
+        var tokens: Int,
+        var lastRefillTimeMillis: Long
+    )
 
-    private val buckets:  MutableMap<String, Bucket> = ConcurrentHashMap()
+    private val buckets = ConcurrentHashMap<String, Bucket>()
 
     override fun allowRequest(clientId: String): Boolean {
-        val now = System.nanoTime()
+        val now = System.currentTimeMillis()
         val bucket = buckets.computeIfAbsent(clientId) {
-            Bucket(capacity.toDouble(), now)
+            Bucket(capacity, now)
         }
 
-        synchronized(bucket) {
-            refill(bucket, now)
-            return if (bucket.tokens >= 1) {
-                bucket.tokens -=1
-                logger.info("✅ Request allowed for client $clientId | Tokens left: ${bucket.tokens}")
-                true
-            } else {
-                logger.warn("❌ Request denied for client $clientId | Tokens left: ${bucket.tokens}")
-                false
-            }
+        refill(bucket, now)
+
+        return if (bucket.tokens > 0) {
+            bucket.tokens--
+            logger.info("✅ Request allowed for client $clientId | Tokens left: ${bucket.tokens}")
+            true
+        } else {
+            logger.warn("❌ Request denied for client $clientId | Tokens left: ${bucket.tokens}")
+            false
         }
     }
 
     private fun refill(bucket: Bucket, now: Long) {
-        val elapsedTimeInSeconds = (now - bucket.lastRefillTimestamp).toDouble() / 1_000_000
-        val tokensToAdd = elapsedTimeInSeconds * refillRatePerSecond
-        if(tokensToAdd > 0) {
-            bucket.tokens = minOf(capacity.toDouble(), bucket.tokens + tokensToAdd)
-            bucket.lastRefillTimestamp = now
+        val elapsedSeconds = (now - bucket.lastRefillTimeMillis) / 1_000_000
+        if (elapsedSeconds > 0) {
+            val tokensToAdd = (elapsedSeconds * refillRatePerSecond).toInt()
+            bucket.tokens = min(capacity, bucket.tokens + tokensToAdd)
+            bucket.lastRefillTimeMillis = now
         }
     }
-
-
 }
