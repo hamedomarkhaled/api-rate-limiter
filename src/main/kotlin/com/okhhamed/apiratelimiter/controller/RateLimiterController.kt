@@ -15,6 +15,6 @@ class RateLimiterController {
     @GetMapping("/api/request")
     fun handleRequest(@RequestParam clientId: String) : String {
         val allowed = rateLimiterManager.allowRequest(clientId)
-        return if(allowed) "Request allowed" else "Too many requests, try later"
+        return if(allowed) "Request allowed\n" else "Too many requests, try later\n"
     }
 }

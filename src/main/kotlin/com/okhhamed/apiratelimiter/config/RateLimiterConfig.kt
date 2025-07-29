@@ -10,7 +10,7 @@ enum class AlgorithmType {
 
 
 object RateLimiterConfig {
-    val enabledAlgorithm : AlgorithmType = AlgorithmType.TOKEN_BUCKET
+    val enabledAlgorithm : AlgorithmType = AlgorithmType.SLIDING_WINDOW
 
     // Token Bucket specific configs
     const val TOKEN_BUCKET_CAPACITY = 3
@@ -19,4 +19,8 @@ object RateLimiterConfig {
     // Leaky Bucket specific configs
     const val LEAKY_BUCKET_CAPACITY = 10
     const val LEAKY_BUCKET_LEAK_RATE = 2
+
+    // Sliding window specific configs
+    const val MAX_REQUESTS = 5
+    const val WINDOW_IN_MILLS = 3000L
 }

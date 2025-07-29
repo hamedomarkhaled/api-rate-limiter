@@ -10,8 +10,9 @@ It supports multiple algorithms and simulates a distributed environment using mu
 - ✅ Pluggable architecture with interface-based rate limiter
 - ⛽ **Token Bucket** algorithm implemented ✅
 - 💧 **Leaky Bucket** algorithm implemented ✅
+- 🪟 **Sliding Window** algorithm implemented ✅
 - ⚙️ Switchable algorithms via Kotlin configuration (hardcoded config for now)
-- 🧪 Unit testing with JUnit (for both algorithms)
+- 🧪 Unit testing with JUnit (for all algorithms)
 - 🔁 Multi-threaded simulation of concurrent clients
 - 📈 Logging of allowed and throttled requests
 
